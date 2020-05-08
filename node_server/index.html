@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>websocket</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="/msgpack.min.js"></script>
+    <script>
+
+var conn;
+window.onload = function () {
+    console.log("on load start")
+    if (!window["WebSocket"]) {
+        console.log("Your browser does not support WebSockets.")
+        return
+    } 
+    conn = new WebSocket("ws://" + '127.0.0.1:9001' + "/api/v1/ws");
+    conn.binaryType = 'arraybuffer';
+    conn.onopen = function (evt) {
+        console.log("onopen", evt);
+        sendMsgToServer();
+    }
+    conn.onclose = function (evt) {
+        console.log("onclose", evt)
+    };
+    conn.onmessage = function (evt) {
+        console.log("onmessage", evt)
+        if (typeof evt.data === String) {
+            
+        } else if (evt.data instanceof ArrayBuffer) {
+            var uint8View = new Uint8Array(evt.data);
+            var data = msgpack.decode(uint8View);
+            if (data.msgtype === 2) {
+                var blob = new Blob([data.data])
+                var img = document.createElement("img");
+                img.onload = function(e) {
+                    window.URL.revokeObjectURL(img.src); // 清除释放
+                };
+                img.src = window.URL.createObjectURL(blob);
+                var eleAppend = document.getElementById("forAppend");
+                eleAppend.appendChild(img);
+            }
+        } else {
+        }
+    };
+    conn.onerror = function (evt) {
+        console.log("onerror", evt)
+    };
+}
+function sendMsgToServer() {
+    console.log("send message to server.")
+    var req = {
+        msgtype: 1,
+        userid: 858,
+        packageuuid: '98677f06-11c0-4333-a5c9-b4545a105ce2',
+        imageuuid: '88c3b923-febf-4a0f-a14d-084f5eb517bc',
+    }
+    var buffer = msgpack.encode(req);
+    conn.send(buffer)
+}
+var ws = new WebSocket('ws://localhost:8080');
+  ws.onopen = function () {
+    console.log('ws onopen');
+    ws.send('from client: hello');
+  };
+  ws.onmessage = function (e) {
+    console.log('ws onmessage');
+    console.log('from server: ' + e.data);
+  };
+    </script>
+  </head>
+  <body>
+      <div id="forAppend"></div>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <script src="" async defer></script>
+  </body>
+</html>
