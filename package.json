@@ -1,0 +1,31 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "daily test",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "http": "^0.0.0",
+    "msgpack-lite": "^0.1.26",
+    "ws": "^6.2.0",
+    "websocket": "^1.0.28"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miaomiaoG/dailyTest.git"
+  },
+  "keywords": [
+    "daily",
+    "test"
+  ],
+  "author": "guomiaomiao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miaomiaoG/dailyTest/issues"
+  },
+  "homepage": "https://github.com/miaomiaoG/dailyTest#readme"
+}
